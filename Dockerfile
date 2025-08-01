@@ -15,15 +15,18 @@ COPY src/ src/
 # Profile 'native' sudah terkonfigurasi di pom.xml untuk Spring AOT
 RUN ./mvnw -Pnative native:compile -DskipTests -Dspring.native.mode=compatibility
 
-# --- Stage 2: Runtime dengan Alpine (open-source) ---
-FROM alpine:3 AS runtime
-# Pasang sertifikat TLS (CA certificates)
-RUN apk add --no-cache ca-certificates
+# --- Stage 2: Runtime with Debian Bookworm-slim (glibc) ---
+FROM debian:bookworm-slim AS runtime
+
+# Install minimal dependencies and CA certificates
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Salin binary hasil build
-COPY --from=builder /workspace/target/api .
+# Salin binary hasil build (pastikan nama sesuai <finalName> atau artifactId di pom.xml)
+COPY --from=builder /workspace/target/api ./
 
 # Jalankan aplikasi
 ENTRYPOINT ["./api"]
