@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 
 @RestController
@@ -15,8 +17,18 @@ import java.util.List;
 public class ProjectController {
     private ProjectRepository projectRepository;
 
-    @GetMapping("/")
+    @GetMapping
     public List<Project> findAll() {
         return projectRepository.findAll();
+    }
+
+    @GetMapping("/create")
+    public Project create() {
+        Project project = new Project();
+        project.setName("Surimbim");
+        project.setDescription("Surimbim dududuuw...");
+        project.setReleaseDate(LocalDate.of(2020, Month.DECEMBER, 1));
+        projectRepository.save(project);
+        return project;
     }
 }
