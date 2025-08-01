@@ -13,7 +13,7 @@ RUN ./mvnw -Pnative native:compile \
   -DskipTests \
   -Dspring.native.mode=compatibility \
   -Dgraalvm.native.additional-build-args="\
-    --march=${MARCH} \
+    --no-fallback \
     --enable-hosted-runtime-option=-XX:CPUFeatures=none \
     --enable-hosted-runtime-option=-XX:+UseSSE=2 \
     --enable-hosted-runtime-option=-XX:-UseAVX \
