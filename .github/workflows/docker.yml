@@ -33,6 +33,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./Dockerfile.jvm       # <-- tambahkan ini
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}:latest
@@ -46,6 +47,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./Dockerfile.jvm       # <-- tambahkan ini
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}:latest
