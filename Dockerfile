@@ -23,8 +23,7 @@ RUN apk add --no-cache ca-certificates
 WORKDIR /app
 
 # Salin binary hasil build
-# Ganti 'myapp' sesuai <finalName> di pom.xml, misal: 'demo-spring-native'
-COPY --from=builder /workspace/target/myapp .
+COPY --from=builder /workspace/target/api .
 
 # Jalankan aplikasi
-ENTRYPOINT ["./myapp"]
+ENTRYPOINT ["./api"]
