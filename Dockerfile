@@ -1,27 +1,11 @@
-FROM ghcr.io/graalvm/native-image-community:21 AS builder
-WORKDIR /workspace
-
-ARG MARCH=x86-64-v1
-
-COPY mvnw pom.xml ./
-COPY .mvn/ .mvn/
-RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
-
-COPY src/ src/
-
-RUN ./mvnw -Pnative native:compile \
-  -DskipTests \
-  -Dspring.native.mode=compatibility \
-  -Dgraalvm.native.additional-build-args="\
-    --no-fallback \
-    --enable-hosted-runtime-option=-XX:CPUFeatures=none \
-    --enable-hosted-runtime-option=-XX:+UseSSE=2 \
-    --enable-hosted-runtime-option=-XX:-UseAVX \
-    --enable-hosted-runtime-option=-XX:-UseFMA"
-
-# Runtime image
-FROM debian:bookworm-slim AS runtime
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
+# Stage 1: Build JAR menggunakan Maven
+FROM maven:3-eclipse-temurin-21 AS build
 WORKDIR /app
-COPY --from=builder /workspace/target/api ./
-ENTRYPOINT ["./api"]
+COPY . .
+RUN mvn clean package -DskipTests
+
+# Stage 2: Jalankan aplikasi dengan JDK 21 (lebih kecil)
+FROM eclipse-temurin:21-jdk-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
