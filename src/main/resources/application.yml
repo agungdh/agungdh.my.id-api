@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: agungdh.my.id-api
+  datasource:
+    # Ganti host, port, dan nama database sesuai environment Anda
+    url: jdbc:postgresql://localhost:5432/agungdh
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    # Atur strategi DDL (none, validate, update, create, create-drop)
+    hibernate:
+      ddl-auto: create-drop
+    # Dialek Hibernate untuk PostgreSQL
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    generate-ddl: false
