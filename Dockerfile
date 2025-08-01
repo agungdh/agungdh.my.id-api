@@ -1,32 +1,34 @@
-# --- Stage 1: Build native image with GraalVM CE (open-source) ---
+# --- Stage 1: Build native image with GraalVM CE ---
 FROM ghcr.io/graalvm/native-image-community:21 AS builder
 WORKDIR /workspace
 
-# 1. Salin Maven Wrapper dan pom.xml
+# Gunakan arg untuk -march
+ARG MARCH=x86-64-v1
+
+# Salin file Maven
 COPY mvnw pom.xml ./
 COPY .mvn/ .mvn/
 
-# 2. Unduh dependensi secara offline
-RUN chmod +x mvnw && \
-    ./mvnw dependency:go-offline -B
+RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
 
-# 3. Salin kode sumber dan build native image
 COPY src/ src/
-# Profile 'native' sudah terkonfigurasi di pom.xml untuk Spring AOT
-RUN ./mvnw -Pnative native:compile -DskipTests -Dspring.native.mode=compatibility -Dgraalvm.native.additional-build-args="--llvm-args=-march=x86-64-v1"
 
-# --- Stage 2: Runtime with Debian Bookworm-slim (glibc) ---
+# Build native image DENGAN --march, BUKAN --llvm-args
+RUN ./mvnw -Pnative native:compile \
+  -DskipTests \
+  -Dspring.native.mode=compatibility \
+  -Dgraalvm.native.additional-build-args="--march=${MARCH}"
+
+# --- Stage 2: Runtime image (minimal) ---
 FROM debian:bookworm-slim AS runtime
 
-# Install minimal dependencies and CA certificates
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Salin binary hasil build (pastikan nama sesuai <finalName> atau artifactId di pom.xml)
+# Salin binary dari build stage
 COPY --from=builder /workspace/target/api ./
 
-# Jalankan aplikasi
 ENTRYPOINT ["./api"]
