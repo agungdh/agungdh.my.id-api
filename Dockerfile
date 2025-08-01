@@ -15,12 +15,10 @@ COPY src/ src/
 # Profile 'native' sudah terkonfigurasi di pom.xml untuk Spring AOT
 RUN ./mvnw -Pnative native:compile -DskipTests -Dspring.native.mode=compatibility
 
-# --- Stage 2: Runtime dengan Debian slim (open-source) ---
-FROM debian:bookworm-slim AS runtime
+# --- Stage 2: Runtime dengan Alpine (open-source) ---
+FROM alpine:3 AS runtime
 # Pasang sertifikat TLS (CA certificates)
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends ca-certificates && \
-    rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache ca-certificates
 
 WORKDIR /app
 
