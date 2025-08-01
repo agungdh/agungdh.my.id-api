@@ -13,7 +13,7 @@ RUN chmod +x mvnw && \
 # 3. Salin kode sumber dan build native image
 COPY src/ src/
 # Profile 'native' sudah terkonfigurasi di pom.xml untuk Spring AOT
-RUN ./mvnw -Pnative native:compile -DskipTests -Dspring.native.mode=compatibility -Dgraalvm.native.additional-build-args="--llvm-args=-march=x86-64"
+RUN ./mvnw -Pnative native:compile -DskipTests -Dspring.native.mode=compatibility -Dgraalvm.native.additional-build-args="--llvm-args=-march=x86-64-v1"
 
 # --- Stage 2: Runtime with Debian Bookworm-slim (glibc) ---
 FROM debian:bookworm-slim AS runtime
