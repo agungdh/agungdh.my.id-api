@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -14,5 +15,9 @@ public class ProjectService {
 
     public List<Project> findAll() {
         return projectRepository.findAll();
+    }
+
+    public Project findById(UUID id) {
+        return projectRepository.findById(id).orElse(null);
     }
 }

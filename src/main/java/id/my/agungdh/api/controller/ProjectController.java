@@ -1,34 +1,21 @@
 package id.my.agungdh.api.controller;
 
 import id.my.agungdh.api.entity.Project;
-import id.my.agungdh.api.repository.ProjectRepository;
+import id.my.agungdh.api.service.ProjectService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.stereotype.Controller;
 
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.List;
+import java.util.UUID;
 
-@RestController
-@RequestMapping("/project")
+@Controller
 @AllArgsConstructor
 public class ProjectController {
-    private ProjectRepository projectRepository;
+    private ProjectService projectService;
 
-    @GetMapping
-    public List<Project> findAll() {
-        return projectRepository.findAll();
-    }
-
-    @GetMapping("/create")
-    public Project create() {
-        Project project = new Project();
-        project.setName("Surimbim");
-        project.setDescription("Surimbim dududuuw...");
-        project.setReleaseDate(LocalDate.of(2020, Month.DECEMBER, 1));
-        projectRepository.save(project);
-        return project;
+    @QueryMapping
+    public Project projectById(@Argument UUID id) {
+        return projectService.findById(id);
     }
 }
