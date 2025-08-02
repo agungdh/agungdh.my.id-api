@@ -1,20 +1,28 @@
 package id.my.agungdh.api.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.github.f4b6a3.uuid.UuidCreator;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Generated;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Data
 public class Project {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(columnDefinition = "UUID", updatable = false, nullable = false)
+    private UUID id;
     private String name;
     private String description;
     private LocalDate releaseDate;
+
+    @PrePersist
+    public void onPrePersist() {
+        if (id == null) {
+            // generate UUIDv7
+            id = UuidCreator.getTimeOrdered();
+        }
+    }
 }
