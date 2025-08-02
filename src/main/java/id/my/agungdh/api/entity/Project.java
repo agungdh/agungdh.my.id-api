@@ -22,7 +22,7 @@ public class Project {
     public void onPrePersist() {
         if (id == null) {
             // generate UUIDv7
-            id = UuidCreator.getTimeOrdered();
+            id = UuidCreator.getTimeOrderedEpoch();
         }
     }
 }
