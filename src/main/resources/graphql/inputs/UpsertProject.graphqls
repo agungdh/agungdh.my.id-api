@@ -1,0 +1,6 @@
+input UpsertProjectInput {
+    id: ID
+    name: String!
+    description: String!
+    releaseDate: String
+}
