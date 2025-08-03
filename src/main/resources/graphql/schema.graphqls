@@ -1,10 +1,11 @@
 type Query {
     projectById(id: String): Project
+    projects: [Project]   # <<-- Tambahan untuk list semua project
 }
 
 type Project {
-    id: String
+    id: ID!
     name: String
     description: String
-    createdAt: String
+    releaseDate: String
 }
