@@ -1,11 +1,1 @@
-type Query {
-    projectById(id: String): Project
-    projects: [Project]   # <<-- Tambahan untuk list semua project
-}
-
-type Project {
-    id: ID!
-    name: String!
-    description: String!
-    releaseDate: String
-}
+type Query

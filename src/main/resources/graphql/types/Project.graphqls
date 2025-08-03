@@ -1,0 +1,6 @@
+type Project {
+    id: ID!
+    name: String!
+    description: String!
+    releaseDate: String
+}
