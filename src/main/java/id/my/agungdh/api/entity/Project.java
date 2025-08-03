@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -16,8 +17,15 @@ public class Project {
     @Id
     @Column(columnDefinition = "UUID", updatable = false, nullable = false)
     private UUID id;
+
+    @Column(nullable = false)
+    @NotBlank
     private String name;
+
+    @Column(nullable = false)
+    @NotBlank
     private String description;
+
     private LocalDate releaseDate;
 
     @PrePersist

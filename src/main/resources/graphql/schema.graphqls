@@ -5,7 +5,7 @@ type Query {
 
 type Project {
     id: ID!
-    name: String
-    description: String
+    name: String!
+    description: String!
     releaseDate: String
 }
