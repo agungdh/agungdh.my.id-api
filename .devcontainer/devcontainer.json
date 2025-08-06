@@ -1,0 +1,16 @@
+{
+  "name": "Spring Boot DevContainer",
+  "dockerFile": "Dockerfile",
+  "settings": {
+    "java.home": "/usr/lib/jvm/java-21-openjdk"
+  },
+  "extensions": [
+    "vscjava.vscode-spring-boot",
+    "redhat.java"
+  ],
+  "forwardPorts": [8080],
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind"
+  ],
+  "postCreateCommand": "./mvnw clean install"
+}
