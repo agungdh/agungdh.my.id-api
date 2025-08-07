@@ -17,7 +17,7 @@ import java.util.UUID;
 @Entity
 @Data
 @Table(
-        indexes = @Index(name = "idx_uuid_v4", columnList = "uuid", unique = false)
+        indexes = @Index(name = "idx_uuid_v4", columnList = "uuid")
 )
 public class Project {
     @Id
