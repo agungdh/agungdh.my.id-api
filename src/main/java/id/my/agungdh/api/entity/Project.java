@@ -1,10 +1,13 @@
 package id.my.agungdh.api.entity;
 
-import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -13,10 +16,16 @@ import java.util.UUID;
 
 @Entity
 @Data
+@Table(
+        indexes = @Index(name = "idx_uuid_v4", columnList = "uuid", unique = false)
+)
 public class Project {
     @Id
-    @Column(columnDefinition = "UUID", updatable = false, nullable = false)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private UUID uuid;
 
     @Column(nullable = false)
     @NotBlank
@@ -30,9 +39,8 @@ public class Project {
 
     @PrePersist
     public void onPrePersist() {
-        if (id == null) {
-            // generate UUIDv7
-            id = UuidCreator.getTimeOrderedEpoch();
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
         }
     }
 }
