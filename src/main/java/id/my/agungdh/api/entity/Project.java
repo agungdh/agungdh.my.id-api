@@ -1,13 +1,6 @@
 package id.my.agungdh.api.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -18,6 +11,7 @@ import java.util.UUID;
 @Data
 @Table(
         indexes = @Index(name = "idx_uuid_v4", columnList = "uuid")
+        // WIP: dibuat hash index
 )
 public class Project {
     @Id

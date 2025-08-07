@@ -1,4 +1,3 @@
-
 extend type Mutation {
     upsertProject(input: UpsertProjectInput!): Project!
     deleteProject(id: ID!): Boolean!

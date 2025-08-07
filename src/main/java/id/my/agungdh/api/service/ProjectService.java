@@ -7,7 +7,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -48,10 +50,10 @@ public class ProjectService {
     // helper untuk abaikan field null
     private String[] getNullPropertyNames(UpsertProjectInput src) {
         var props = new ArrayList<String>();
-        if (src.id() == null)           props.add("id");
-        if (src.name() == null)         props.add("name");
-        if (src.description() == null)  props.add("description");
-        if (src.releaseDate() == null)  props.add("releaseDate");
+        if (src.id() == null) props.add("id");
+        if (src.name() == null) props.add("name");
+        if (src.description() == null) props.add("description");
+        if (src.releaseDate() == null) props.add("releaseDate");
         return props.toArray(String[]::new);
     }
 
