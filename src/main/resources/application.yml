@@ -20,3 +20,5 @@ spring:
   graphql:
     graphiql:
       enabled: true
+  flyway:
+    enabled: false
