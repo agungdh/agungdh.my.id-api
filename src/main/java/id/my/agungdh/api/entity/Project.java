@@ -33,11 +33,8 @@ public class Project {
 
     @PrePersist
     public void onPrePersist() {
-        if (uuid == null) {
-            uuid = UUID.randomUUID();
-        }
-
         if (id == null) {
+            uuid = UUID.randomUUID();
             createdAt = System.currentTimeMillis();
             updatedAt = System.currentTimeMillis();
         }

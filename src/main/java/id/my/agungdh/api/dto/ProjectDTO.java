@@ -7,6 +7,6 @@ public record ProjectDTO(
         UUID id,
         String name,
         String description,
-        LocalDate releasedDate
+        LocalDate releaseDate
 ) {
 }

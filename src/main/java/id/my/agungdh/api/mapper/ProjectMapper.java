@@ -8,8 +8,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface ProjectMapper {
     @Mapping(source = "uuid", target = "id")
+    @Mapping(source = "releaseDate", target = "releaseDate")
     ProjectDTO toDTO(Project project);
-
-    @Mapping(source = "id", target = "uuid")
-    Project toEntity(ProjectDTO projectDTO);
 }
