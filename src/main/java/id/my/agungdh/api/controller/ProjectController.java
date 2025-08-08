@@ -1,5 +1,6 @@
 package id.my.agungdh.api.controller;
 
+import id.my.agungdh.api.dto.ProjectDTO;
 import id.my.agungdh.api.entity.Project;
 import id.my.agungdh.api.input.UpsertProjectInput;
 import id.my.agungdh.api.service.ProjectService;
@@ -28,9 +29,8 @@ public class ProjectController {
     }
 
     @MutationMapping
-    public Project upsertProject(@Argument UpsertProjectInput input) {
-        System.out.println(input);
-        return projectService.upsertProject(input);
+    public ProjectDTO upsertProject(@Argument ProjectDTO projectDto) {
+        return projectService.upsertProject(projectDto);
     }
 
     @MutationMapping

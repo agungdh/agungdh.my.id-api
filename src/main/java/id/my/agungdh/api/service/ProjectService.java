@@ -1,7 +1,9 @@
 package id.my.agungdh.api.service;
 
+import id.my.agungdh.api.dto.ProjectDTO;
 import id.my.agungdh.api.entity.Project;
 import id.my.agungdh.api.input.UpsertProjectInput;
+import id.my.agungdh.api.mapper.ProjectMapper;
 import id.my.agungdh.api.repository.ProjectRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -15,6 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ProjectService {
     private ProjectRepository projectRepository;
+    private ProjectMapper projectMapper;
 
     public List<Project> findAll() {
         return projectRepository.findAll();
@@ -24,27 +27,30 @@ public class ProjectService {
         return projectRepository.findByUuid(id).orElseThrow();
     }
 
-    public Project upsertProject(UpsertProjectInput input) {
+    public ProjectDTO upsertProject(ProjectDTO projectDto) {
+        System.out.println("Project: " + projectDto);
+
         Project project;
 
-        if (input.id() != null) {
-            project = findById(UUID.fromString(input.id()));
+        if (projectDto.id() != null) {
+            project = findById(projectDto.id());
         } else {
             project = new Project();
         }
 
         System.out.println(project);
 
-        // copy all non-null props from input → project
-        BeanUtils.copyProperties(input, project, getNullPropertyNames(input));
+        // copy all non-null props from projectDto → project
+        BeanUtils.copyProperties(projectDto, project, getNullPropertyNames(projectDto));
 
         // save/overwrite
         projectRepository.save(project);
-        return project;
+
+        return projectMapper.toDTO(project);
     }
 
     // helper untuk abaikan field null
-    private String[] getNullPropertyNames(UpsertProjectInput src) {
+    private String[] getNullPropertyNames(ProjectDTO src) {
         var props = new ArrayList<String>();
         if (src.id() == null) props.add("id");
         if (src.name() == null) props.add("name");
