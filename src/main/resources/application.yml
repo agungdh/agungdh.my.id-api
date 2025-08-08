@@ -10,7 +10,7 @@ spring:
   jpa:
     # Atur strategi DDL (none, validate, update, create, create-drop)
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
     # Dialek Hibernate untuk PostgreSQL
     properties:
       hibernate:
