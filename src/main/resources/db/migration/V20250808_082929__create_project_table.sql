@@ -1,6 +1,6 @@
 -- Membuat tabel project
 CREATE TABLE project (
-                         id SERIAL PRIMARY KEY,
+                         id BIGSERIAL PRIMARY KEY,
                          uuid UUID DEFAULT gen_random_uuid(),
                          name VARCHAR(255),
                          description TEXT,

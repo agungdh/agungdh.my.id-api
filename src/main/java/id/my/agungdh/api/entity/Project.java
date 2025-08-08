@@ -9,10 +9,6 @@ import java.util.UUID;
 
 @Entity
 @Data
-@Table(
-        indexes = @Index(name = "idx_uuid_v4", columnList = "uuid")
-        // WIP: dibuat hash index
-)
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,11 +26,4 @@ public class Project {
     private String description;
 
     private LocalDate releaseDate;
-
-    @PrePersist
-    public void onPrePersist() {
-        if (uuid == null) {
-            uuid = UUID.randomUUID();
-        }
-    }
 }
