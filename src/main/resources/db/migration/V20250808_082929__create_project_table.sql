@@ -1,12 +1,12 @@
 -- Membuat tabel project
 CREATE TABLE project (
                          id BIGSERIAL PRIMARY KEY,
-                         uuid UUID DEFAULT gen_random_uuid(),
-                         name VARCHAR(255),
-                         description TEXT,
+                         uuid UUID NOT NULL,
+                         name VARCHAR(255) NOT NULL,
+                         description TEXT NOT NULL,
                          release_date DATE,
-                         created_at INT,
-                         updated_at INT
+                         created_at BIGINT,
+                         updated_at BIGINT
 );
 
 -- Membuat hash index untuk kolom uuid

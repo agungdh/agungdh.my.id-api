@@ -26,4 +26,20 @@ public class Project {
     private String description;
 
     private LocalDate releaseDate;
+
+    private Long createdAt;
+
+    private Long updatedAt;
+
+    @PrePersist
+    public void onPrePersist() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+        }
+
+        if (id == null) {
+            createdAt = System.currentTimeMillis();
+            updatedAt = System.currentTimeMillis();
+        }
+    }
 }
