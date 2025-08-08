@@ -21,20 +21,16 @@ public class ProjectService {
     }
 
     public Project findById(UUID id) {
-        return projectRepository.findById(id).orElse(null);
+        return projectRepository.findByUuid(id).orElseThrow();
     }
 
     public Project upsertProject(UpsertProjectInput input) {
         Project project;
-        System.out.println(input);
+
         if (input.id() != null) {
-            // update existing
-            project = projectRepository.findById(UUID.fromString(input.id())).orElseThrow();
-            System.out.println("update");
+            project = findById(UUID.fromString(input.id()));
         } else {
-            // create new
             project = new Project();
-            System.out.println("create");
         }
 
         System.out.println(project);
@@ -58,7 +54,9 @@ public class ProjectService {
     }
 
     public boolean deleteProject(String id) {
-        projectRepository.deleteById(UUID.fromString(id));
+        Project project = findById(UUID.fromString(id));
+
+        projectRepository.delete(project);
 
         return true;
     }
