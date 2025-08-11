@@ -10,6 +10,8 @@ import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,8 +31,14 @@ public class ProjectController {
     }
 
     @MutationMapping
-    public ProjectDTO upsertProject(@Argument ProjectDTO projectDto) {
-        return projectService.upsertProject(projectDto);
+    public ProjectDTO upsertProject(@Argument UpsertProjectInput upsertProjectInput) {
+        System.out.println(upsertProjectInput);
+        return projectService.upsertProject(new ProjectDTO(
+                upsertProjectInput.id(),
+                upsertProjectInput.name(),
+                upsertProjectInput.description(),
+                LocalDate.parse(upsertProjectInput.releaseDate())
+        ));
     }
 
     @MutationMapping
