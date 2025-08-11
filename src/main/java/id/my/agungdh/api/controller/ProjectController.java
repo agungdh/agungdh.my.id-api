@@ -31,7 +31,7 @@ public class ProjectController {
     }
 
     @MutationMapping
-    public ProjectDTO upsertProject(@Argument UpsertProjectInput input) {
+    public ProjectDTO upsertProject(@Argument ProjectDTO input) {
         System.out.println(input);
         return projectService.upsertProject(new ProjectDTO(
                 input.id(),
