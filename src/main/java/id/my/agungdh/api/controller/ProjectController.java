@@ -31,13 +31,13 @@ public class ProjectController {
     }
 
     @MutationMapping
-    public ProjectDTO upsertProject(@Argument UpsertProjectInput upsertProjectInput) {
-        System.out.println(upsertProjectInput);
+    public ProjectDTO upsertProject(@Argument UpsertProjectInput input) {
+        System.out.println(input);
         return projectService.upsertProject(new ProjectDTO(
-                upsertProjectInput.id(),
-                upsertProjectInput.name(),
-                upsertProjectInput.description(),
-                LocalDate.parse(upsertProjectInput.releaseDate())
+                input.id(),
+                input.name(),
+                input.description(),
+                input.releaseDate()
         ));
     }
 
