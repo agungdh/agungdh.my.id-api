@@ -10,4 +10,8 @@ public interface ProjectMapper {
     @Mapping(source = "uuid", target = "id")
     @Mapping(source = "releaseDate", target = "releaseDate")
     ProjectDTO toDTO(Project project);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(source = "id", target = "uuid")
+    Project toEntity(ProjectDTO projectDTO);
 }

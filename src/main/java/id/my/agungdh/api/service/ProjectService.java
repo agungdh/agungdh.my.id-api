@@ -18,12 +18,24 @@ public class ProjectService {
     private ProjectRepository projectRepository;
     private ProjectMapper projectMapper;
 
-    public List<Project> findAll() {
-        return projectRepository.findAll();
+    public List<ProjectDTO> findAll() {
+        List<Project> projects = projectRepository.findAll();
+        List<ProjectDTO> projectDTOs = new ArrayList<>();
+        for (Project project : projects) {
+            projectDTOs.add(
+                    projectMapper.toDTO(project)
+            );
+        }
+
+        return projectDTOs;
     }
 
     public Project find(UUID id) {
         return projectRepository.findByUuid(id).orElseThrow();
+    }
+
+    public ProjectDTO getProject(UUID id) {
+        return projectMapper.toDTO(find(id));
     }
 
     public ProjectDTO upsertProject(ProjectDTO projectDto) {
@@ -58,11 +70,9 @@ public class ProjectService {
         return props.toArray(String[]::new);
     }
 
-    public boolean deleteProject(UUID id) {
+    public void deleteProject(UUID id) {
         Project project = find(id);
 
         projectRepository.delete(project);
-
-        return true;
     }
 }
