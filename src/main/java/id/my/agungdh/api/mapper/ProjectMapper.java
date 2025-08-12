@@ -2,7 +2,9 @@ package id.my.agungdh.api.mapper;
 
 import id.my.agungdh.api.dto.ProjectDTO;
 import id.my.agungdh.api.entity.Project;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface ProjectMapper {
