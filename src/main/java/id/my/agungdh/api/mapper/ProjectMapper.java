@@ -4,7 +4,7 @@ import id.my.agungdh.api.dto.ProjectDTO;
 import id.my.agungdh.api.entity.Project;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring")
 public interface ProjectMapper {
 
     @Mapping(source = "uuid", target = "id")
@@ -14,7 +14,6 @@ public interface ProjectMapper {
     @Mapping(source = "id", target = "uuid")
     Project toEntity(ProjectDTO dto);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "uuid", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

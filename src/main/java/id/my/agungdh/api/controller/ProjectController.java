@@ -32,7 +32,9 @@ public class ProjectController {
     }
 
     @MutationMapping
-    public void deleteProject(@Argument UUID id) {
+    public ProjectDTO deleteProject(@Argument UUID id) {
         projectService.deleteProject(id);
+
+        return null;
     }
 }
