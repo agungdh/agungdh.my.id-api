@@ -11,68 +11,46 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
 public class ProjectService {
-    private ProjectRepository projectRepository;
-    private ProjectMapper projectMapper;
+    private final ProjectRepository projectRepository;
+    private final ProjectMapper projectMapper;
 
+    @Transactional(readOnly = true)
     public List<ProjectDTO> findAll() {
-        List<Project> projects = projectRepository.findAll();
-        List<ProjectDTO> projectDTOs = new ArrayList<>();
-        for (Project project : projects) {
-            projectDTOs.add(
-                    projectMapper.toDTO(project)
-            );
-        }
-
-        return projectDTOs;
+        return projectRepository.findAll().stream().map(projectMapper::toDTO).toList();
     }
 
+    @Transactional(readOnly = true)
     public Project find(UUID id) {
-        return projectRepository.findByUuid(id).orElseThrow();
+        return projectRepository.findByUuid(id).orElseThrow(); // tambahkan NotFound exception sesuai selera
     }
 
+    @Transactional(readOnly = true)
     public ProjectDTO getProject(UUID id) {
         return projectMapper.toDTO(find(id));
     }
 
-    public ProjectDTO upsertProject(ProjectDTO projectDto) {
-        System.out.println("Project: " + projectDto);
-
-        Project project;
-
-        if (projectDto.id() != null) {
-            project = find(projectDto.id());
+    @Transactional
+    public ProjectDTO upsertProject(ProjectDTO dto) {
+        Project entity;
+        if (dto.id() == null) {
+            // CREATE
+            entity = projectMapper.toEntity(dto); // uuid akan diisi dari dto.id (null) -> @PrePersist bikin UUID baru
         } else {
-            project = new Project();
+            // UPDATE
+            entity = find(dto.id());              // load managed entity
+            projectMapper.updateEntity(dto, entity); // patch field yang boleh diubah
         }
-
-        System.out.println(project);
-
-        // copy all non-null props from projectDto → project
-        BeanUtils.copyProperties(projectDto, project, getNullPropertyNames(projectDto));
-
-        // save/overwrite
-        projectRepository.save(project);
-
-        return projectMapper.toDTO(project);
+        entity = projectRepository.save(entity);
+        return projectMapper.toDTO(entity);
     }
 
-    // helper untuk abaikan field null
-    private String[] getNullPropertyNames(ProjectDTO src) {
-        var props = new ArrayList<String>();
-        if (src.id() == null) props.add("id");
-        if (src.name() == null) props.add("name");
-        if (src.description() == null) props.add("description");
-        if (src.releaseDate() == null) props.add("releaseDate");
-        return props.toArray(String[]::new);
-    }
-
+    @Transactional
     public void deleteProject(UUID id) {
-        Project project = find(id);
-
-        projectRepository.delete(project);
+        projectRepository.delete(find(id));
     }
 }
