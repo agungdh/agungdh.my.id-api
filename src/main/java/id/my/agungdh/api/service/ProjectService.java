@@ -5,13 +5,11 @@ import id.my.agungdh.api.entity.Project;
 import id.my.agungdh.api.mapper.ProjectMapper;
 import id.my.agungdh.api.repository.ProjectRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -26,7 +24,7 @@ public class ProjectService {
 
     @Transactional(readOnly = true)
     public Project find(UUID id) {
-        return projectRepository.findByUuid(id).orElseThrow(); // tambahkan NotFound exception sesuai selera
+        return projectRepository.findByUuid(id).orElseThrow();
     }
 
     @Transactional(readOnly = true)
@@ -38,12 +36,10 @@ public class ProjectService {
     public ProjectDTO upsertProject(ProjectDTO dto) {
         Project entity;
         if (dto.id() == null) {
-            // CREATE
-            entity = projectMapper.toEntity(dto); // uuid akan diisi dari dto.id (null) -> @PrePersist bikin UUID baru
+            entity = projectMapper.toEntity(dto);
         } else {
-            // UPDATE
-            entity = find(dto.id());              // load managed entity
-            projectMapper.updateEntity(dto, entity); // patch field yang boleh diubah
+            entity = find(dto.id());
+            projectMapper.updateEntity(dto, entity);
         }
         entity = projectRepository.save(entity);
         return projectMapper.toDTO(entity);
