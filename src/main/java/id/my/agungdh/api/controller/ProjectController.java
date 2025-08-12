@@ -21,28 +21,22 @@ public class ProjectController {
     private ProjectService projectService;
 
     @QueryMapping
-    public List<Project> projects() {
+    public List<Project> getProjects() {
         return projectService.findAll();
     }
 
     @QueryMapping
-    public Project projectById(@Argument UUID id) {
-        return projectService.findById(id);
+    public Project getProject(@Argument UUID id) {
+        return projectService.find(id);
     }
 
     @MutationMapping
     public ProjectDTO upsertProject(@Argument ProjectDTO input) {
-        System.out.println(input);
-        return projectService.upsertProject(new ProjectDTO(
-                input.id(),
-                input.name(),
-                input.description(),
-                input.releaseDate()
-        ));
+        return projectService.upsertProject(input);
     }
 
     @MutationMapping
-    public Boolean deleteProject(@Argument String id) {
+    public Boolean deleteProject(@Argument UUID id) {
         return projectService.deleteProject(id);
     }
 }

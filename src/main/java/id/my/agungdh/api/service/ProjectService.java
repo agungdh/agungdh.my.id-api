@@ -23,7 +23,7 @@ public class ProjectService {
         return projectRepository.findAll();
     }
 
-    public Project findById(UUID id) {
+    public Project find(UUID id) {
         return projectRepository.findByUuid(id).orElseThrow();
     }
 
@@ -33,7 +33,7 @@ public class ProjectService {
         Project project;
 
         if (projectDto.id() != null) {
-            project = findById(projectDto.id());
+            project = find(projectDto.id());
         } else {
             project = new Project();
         }
@@ -59,8 +59,8 @@ public class ProjectService {
         return props.toArray(String[]::new);
     }
 
-    public boolean deleteProject(String id) {
-        Project project = findById(UUID.fromString(id));
+    public boolean deleteProject(UUID id) {
+        Project project = find(id);
 
         projectRepository.delete(project);
 

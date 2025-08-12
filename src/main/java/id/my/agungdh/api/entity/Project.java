@@ -36,7 +36,8 @@ public class Project {
         if (id == null) {
             uuid = UUID.randomUUID();
             createdAt = System.currentTimeMillis();
-            updatedAt = System.currentTimeMillis();
         }
+
+        updatedAt = System.currentTimeMillis();
     }
 }
