@@ -1,4 +1,4 @@
-/* (C)2025 */
+/* (C) 2025 Agung DH */
 package id.my.agungdh.api.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;

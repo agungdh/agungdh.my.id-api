@@ -175,8 +175,10 @@
                         <formatAnnotations />  <!-- fixes formatting of type annotations, see below -->
 
                         <licenseHeader>
-                            <content>/* (C)$YEAR */</content>  <!-- or <file>${project.basedir}/license-header</file> -->
+                            <content>/* (C) $YEAR Agung DH */</content>
+                            <delimiter>package </delimiter>
                         </licenseHeader>
+
                     </java>
                 </configuration>
             </plugin>
