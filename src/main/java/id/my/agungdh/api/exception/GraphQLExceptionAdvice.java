@@ -3,11 +3,11 @@ package id.my.agungdh.api.exception;
 import graphql.GraphQLError;
 import graphql.GraphqlErrorBuilder;
 import graphql.schema.DataFetchingEnvironment;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.graphql.data.method.annotation.GraphQlExceptionHandler;
 import org.springframework.graphql.execution.ErrorType;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
-import jakarta.persistence.EntityNotFoundException; // contoh; sesuaikan dengan exception-mu
 import java.util.Map;
 
 @ControllerAdvice // berlaku global untuk semua @Controller GraphQL
