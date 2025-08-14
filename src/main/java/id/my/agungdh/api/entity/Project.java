@@ -23,11 +23,9 @@ public class Project {
     private UUID uuid;
 
     @Column(nullable = false)
-    @NotBlank
     private String name;
 
     @Column(nullable = false)
-    @NotBlank
     private String description;
 
     private LocalDate releaseDate;

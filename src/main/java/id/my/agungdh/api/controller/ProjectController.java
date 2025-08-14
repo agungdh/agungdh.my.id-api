@@ -2,6 +2,7 @@ package id.my.agungdh.api.controller;
 
 import id.my.agungdh.api.dto.ProjectDTO;
 import id.my.agungdh.api.service.ProjectService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -27,7 +28,7 @@ public class ProjectController {
     }
 
     @MutationMapping
-    public ProjectDTO upsertProject(@Argument ProjectDTO input) {
+    public ProjectDTO upsertProject(@Valid @Argument ProjectDTO input) {
         return projectService.upsertProject(input);
     }
 
