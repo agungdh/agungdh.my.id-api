@@ -5,6 +5,7 @@ import graphql.GraphQLError;
 import graphql.GraphqlErrorBuilder;
 import graphql.schema.DataFetchingEnvironment;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Path;
 import java.util.List;
 import java.util.Map;
 import org.springframework.graphql.data.method.annotation.GraphQlExceptionHandler;
@@ -36,7 +37,7 @@ public class GraphQLValidationExceptionAdvice {
             .map(
                 v ->
                     Map.<String, Object>of(
-                        "field", v.getPropertyPath().toString(),
+                        "field", leaf(v.getPropertyPath()),
                         "message", v.getMessage(),
                         "rejectedValue", v.getInvalidValue()))
             .toList();
@@ -49,9 +50,19 @@ public class GraphQLValidationExceptionAdvice {
   }
 
   private Map<String, Object> toMap(FieldError fe) {
+    assert fe.getDefaultMessage() != null;
+    assert fe.getRejectedValue() != null;
     return Map.of(
         "field", fe.getField(),
         "message", fe.getDefaultMessage(),
         "rejectedValue", fe.getRejectedValue());
+  }
+
+  private String leaf(Path path) {
+    String last = null;
+    for (Path.Node n : path) {
+      if (n.getName() != null && !n.getName().isBlank()) last = n.getName();
+    }
+    return last;
   }
 }
