@@ -33,7 +33,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: Dockerfile.native
+          file: Dockerfile.native-arm64
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}:arm64-native
@@ -47,7 +47,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: Dockerfile.native
+          file: Dockerfile.native-arm64
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}:arm64-native
