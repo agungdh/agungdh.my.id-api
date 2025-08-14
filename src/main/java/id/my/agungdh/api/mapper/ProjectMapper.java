@@ -13,8 +13,10 @@ public interface ProjectMapper {
   @Mapping(source = "uuid", target = "id")
   ProjectDTO toDTO(Project project);
 
-  @Mapping(target = "id", ignore = true)
-  @Mapping(source = "id", target = "uuid")
+  @Mapping(target = "id", ignore = true) // JPA @Id (auto)
+  @Mapping(source = "id", target = "uuid") // DTO.id -> Entity.uuid
+  @Mapping(target = "createdAt", ignore = true) // diisi auditing
+  @Mapping(target = "updatedAt", ignore = true) // diisi auditing
   Project toEntity(ProjectDTO dto);
 
   @Mapping(target = "id", ignore = true)
