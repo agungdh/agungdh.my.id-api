@@ -1,3 +1,4 @@
+/* (C)2025 */
 package id.my.agungdh.api.mapper;
 
 import id.my.agungdh.api.dto.ProjectDTO;
@@ -9,16 +10,16 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface ProjectMapper {
 
-    @Mapping(source = "uuid", target = "id")
-    ProjectDTO toDTO(Project project);
+  @Mapping(source = "uuid", target = "id")
+  ProjectDTO toDTO(Project project);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(source = "id", target = "uuid")
-    Project toEntity(ProjectDTO dto);
+  @Mapping(target = "id", ignore = true)
+  @Mapping(source = "id", target = "uuid")
+  Project toEntity(ProjectDTO dto);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "uuid", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    void updateEntity(ProjectDTO dto, @MappingTarget Project entity);
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "uuid", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
+  @Mapping(target = "updatedAt", ignore = true)
+  void updateEntity(ProjectDTO dto, @MappingTarget Project entity);
 }
