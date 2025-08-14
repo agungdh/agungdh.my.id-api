@@ -1,4 +1,4 @@
-name: Build Native
+name: Build Native ARM
 on: [ push, pull_request ]
 jobs:
   build:
