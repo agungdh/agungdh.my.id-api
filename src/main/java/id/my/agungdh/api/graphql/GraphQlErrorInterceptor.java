@@ -1,86 +1,111 @@
-/* (C)2025 */
 package id.my.agungdh.api.graphql;
 
 import graphql.GraphQLError;
 import graphql.GraphqlErrorBuilder;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.springframework.graphql.ResponseError;
+import org.springframework.graphql.execution.ErrorType;
 import org.springframework.graphql.server.WebGraphQlInterceptor;
 import org.springframework.graphql.server.WebGraphQlRequest;
 import org.springframework.graphql.server.WebGraphQlResponse;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Component
 public class GraphQlErrorInterceptor implements WebGraphQlInterceptor {
 
-  // Contoh pesan: ... is missing required fields '[description, name]'
-  private static final Pattern MISSING_FIELDS =
-      Pattern.compile("missing required fields '\\[(.*?)\\]'");
+    @Override
+    public Mono<WebGraphQlResponse> intercept(WebGraphQlRequest request, Chain chain) {
+        return chain.next(request).map(response -> {
+            var original = response.getErrors();
+            if (original.isEmpty()) return response;
 
-  @Override
-  public Mono<WebGraphQlResponse> intercept(WebGraphQlRequest request, Chain chain) {
-    return chain
-        .next(request)
-        .map(
-            response -> {
-              if (response.getErrors().isEmpty()) return response;
+            List<GraphQLError> normalized = original.stream()
+                    .map(this::normalize)
+                    .toList();
 
-              List<GraphQLError> formatted =
-                  response.getErrors().stream().map(this::toFormattedError).toList();
-
-              return response.transform(b -> b.errors(formatted));
-            });
-  }
-
-  private GraphQLError toFormattedError(ResponseError err) {
-    Map<String, Object> ext = new LinkedHashMap<>();
-    if (err.getExtensions() != null) ext.putAll(err.getExtensions());
-
-    // GraphQL-java kirim "classification":"ValidationError" untuk error validasi request-level
-    String classification = String.valueOf(ext.getOrDefault("classification", ""));
-    if ("ValidationError".equals(classification)) {
-      List<Map<String, Object>> violations = new ArrayList<>();
-
-      // Ekstrak field yang hilang dari pesan
-      Matcher m = MISSING_FIELDS.matcher(err.getMessage());
-      if (m.find()) {
-        String inside = m.group(1); // "description, name"
-        Arrays.stream(inside.split(","))
-            .map(String::trim)
-            .filter(s -> !s.isEmpty())
-            .forEach(
-                field ->
-                    violations.add(
-                        Map.of(
-                            "path",
-                            "input." + field.replace("'", ""),
-                            "message",
-                            "Field is required")));
-      }
-
-      ext.put("code", "GRAPHQL_VALIDATION");
-      if (!violations.isEmpty()) {
-        ext.put("violations", violations);
-      }
-
-      return GraphqlErrorBuilder.newError()
-          .message("Validation failed")
-          .locations(err.getLocations())
-          .path(err.getParsedPath())
-          .extensions(ext)
-          .build();
+            return response.transform(b -> b.errors(normalized));
+        });
     }
 
-    // Default: biarkan seperti aslinya tapi beri code standar
-    ext.putIfAbsent("code", "INTERNAL_ERROR");
-    return GraphqlErrorBuilder.newError()
-        .message(err.getMessage())
-        .locations(err.getLocations())
-        .path(err.getParsedPath())
-        .extensions(ext)
-        .build();
-  }
+    private GraphQLError normalize(ResponseError err) {
+        String classification = String.valueOf(err.getErrorType());
+        boolean isValidation = "ValidationError".equalsIgnoreCase(classification);
+
+        Map<String, Object> ext = new LinkedHashMap<>();
+        if (err.getExtensions() != null) ext.putAll(err.getExtensions());
+        ext.put("code", isValidation ? "VALIDATION_ERROR" : "INTERNAL_ERROR");
+        ext.put("classification", classification);
+
+        String raw = err.getMessage() == null ? "" : err.getMessage();
+        if (isValidation) {
+            // Ambil tipe validasi dari "(WrongType@...)" → "WrongType"
+            String vType = extractBetween(raw, "\\(", "@");
+            if (vType != null && !vType.isBlank()) {
+                ext.put("validationType", vType);
+            }
+
+            // Jika pesan mengandung "missing required fields '[a, b, c]'"
+            List<String> missing = extractBracketList(raw);
+            if (!missing.isEmpty()) {
+                List<Map<String, Object>> errors = missing.stream()
+                        .map(f -> Map.<String, Object>of(
+                                "field", f,
+                                "message", "is required",
+                                "reason", "missing_required_field"
+                        ))
+                        .toList();
+                ext.put("errors", errors);
+            }
+
+            return GraphqlErrorBuilder.newError()
+                    .message("Validation failed")
+                    .locations(err.getLocations())
+                    .path(err.getParsedPath())
+                    .errorType(ErrorType.BAD_REQUEST)
+                    .extensions(ext)
+                    .build();
+        }
+
+        // Non-validation → tetap seperti semula tapi tambahkan code
+        return GraphqlErrorBuilder.newError()
+                .message(raw)
+                .locations(err.getLocations())
+                .path(err.getParsedPath())
+                .errorType(ErrorType.INTERNAL_ERROR)
+                .extensions(ext)
+                .build();
+    }
+
+    /** Ambil string antara firstRegexStart dan first occurrence of endChar, mis. "(WrongType@...)" → "WrongType" */
+    private String extractBetween(String text, String startRegex, String endCharLiteral) {
+        Pattern p = Pattern.compile(startRegex);
+        Matcher m = p.matcher(text);
+        if (m.find()) {
+            int start = m.end();
+            int end = text.indexOf(endCharLiteral, start);
+            if (end > start) return text.substring(start, end);
+        }
+        return null;
+    }
+
+    /** Ambil daftar dalam bracket terakhir, mis. "... '[name, description]'" → ["name","description"] */
+    private List<String> extractBracketList(String text) {
+        int l = text.lastIndexOf('[');
+        int r = text.indexOf(']', Math.max(l, 0));
+        if (l >= 0 && r > l) {
+            String inside = text.substring(l + 1, r);
+            String[] parts = inside.split(",");
+            List<String> out = new ArrayList<>();
+            for (String p : parts) {
+                String v = p.trim().replaceAll("^'+|'+$", "");
+                if (!v.isEmpty()) out.add(v);
+            }
+            return out;
+        }
+        return Collections.emptyList();
+    }
 }
