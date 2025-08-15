@@ -2,14 +2,13 @@
 package id.my.agungdh.api.controller;
 
 import id.my.agungdh.api.dto.ProjectDTO;
-import id.my.agungdh.api.entity.Project;
-import id.my.agungdh.api.mapper.ProjectMapper;
-import id.my.agungdh.api.repository.ProjectRepository;
-import java.time.LocalDate;
-import java.time.Month;
+import id.my.agungdh.api.service.ProjectService;
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,27 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/project")
 @AllArgsConstructor
 public class ProjectRestController {
-  private ProjectRepository projectRepository;
-  private ProjectMapper projectMapper;
+  private ProjectService projectService;
 
   @GetMapping
-  public List<Project> findAll() {
-    return projectRepository.findAll();
+  public ResponseEntity<List<ProjectDTO>> index() {
+    return ResponseEntity.ok(projectService.findAll());
   }
 
-  @GetMapping("/create")
-  public ProjectDTO create() {
-    Project project = new Project();
-    project.setName("Surimbim");
-    project.setDescription("Surimbim dududuuw...");
-    project.setReleaseDate(LocalDate.of(2020, Month.DECEMBER, 1));
-    projectRepository.save(project);
-
-    ProjectDTO projectDTO = projectMapper.toDTO(project);
-
-    System.out.println(project);
-    System.out.println(projectDTO);
-
-    return projectDTO;
+  @GetMapping("/{id}")
+  public ResponseEntity<ProjectDTO> get(@PathVariable UUID id) {
+    return ResponseEntity.ok(projectService.getProject(id));
   }
 }

@@ -23,7 +23,7 @@ public class ProjectService {
   }
 
   @Transactional(readOnly = true)
-  public Project find(UUID id) {
+  private Project find(UUID id) {
     return projectRepository.findByUuid(id).orElseThrow();
   }
 
